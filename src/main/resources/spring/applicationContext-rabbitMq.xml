@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/rabbit"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:c="http://www.springframework.org/schema/c"
+             xmlns:p="http://www.springframework.org/schema/p"
+             xmlns:jms="http://www.springframework.org/schema/jms"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jms
+        http://www.springframework.org/schema/jms/spring-jms.xsd
+        http://www.springframework.org/schema/rabbit
+        http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+
+
+    <beans:bean id="messageConverterRabbit"
+                class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
+
+    <!--默认情况下，连接工厂会假设RabbitMQ服务器监听localhost的5672端口，并且用户名和密码均为guest。对于开发来讲-->
+    <connection-factory id="connectionFactory"
+                        host="localhost"
+                        port="5672"
+                        username="guest"
+                        password="guest"/>
+
+    <!--<admin>元素会创建一个RabbitMQ管理组件（administrative component），它会自动创建
+    （如果它们在RabbitMQ代理中尚未存在的话）上述这些元素所声明的队列、Exchange以及binding。-->
+    <!--默认会有一个没有名称的directExchange，所有的队列都会绑定到这个Exchange上，并且routing key与队列的名称相同。-->
+    <admin connection-factory="connectionFactory"/>
+    <queue id="spittleAlertQueue" name="spittle.alert.queue"/>
+
+    <queue name="spittle.alert.queue.1"/>
+    <queue name="spittle.alert.queue.2"/>
+    <queue name="spittle.alert.queue.3"/>
+    <fanout-exchange name="spittle.fanout.exchange">
+        <bindings>
+            <binding queue="spittle.alert.queue.1"/>
+            <binding queue="spittle.alert.queue.2"/>
+            <binding queue="spittle.alert.queue.3"/>
+        </bindings>
+    </fanout-exchange>
+
+    <beans:bean id="spittleAlertHandler" class="com.segi.springmvc.handler.SpittleAlertHandler"/>
+
+    <beans:bean id="rabbitAlertService" class="com.segi.springmvc.service.impl.RabbitAlertServiceImpl"/>
+    <!--消息服务导出器-->
+    <beans:bean id="rabbitServiceExporter" class="org.springframework.jms.remoting.JmsInvokerServiceExporter"
+                p:service-ref="rabbitAlertService"
+                p:serviceInterface="com.segi.springmvc.service.AlertService"/>
+
+    <listener-container connection-factory="connectionFactory" message-converter="messageConverterRabbit">
+        <listener ref="spittleAlertHandler" method="receiveSpittleAlert" queue-names="spittle.alert.queue"/>
+    </listener-container>
+
+
+    <template connection-factory="connectionFactory"
+              id="spittle.fanout"
+              exchange="spittle.fanout.exchange"
+              message-converter="messageConverterRabbit"
+              routing-key="spittle.alert.queue"
+              queue="spittle.alert.queue.1"/>
+
+</beans:beans>

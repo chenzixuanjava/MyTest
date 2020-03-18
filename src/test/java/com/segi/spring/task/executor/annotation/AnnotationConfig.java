@@ -1,0 +1,38 @@
+package com.segi.spring.task.executor.annotation;
+
+import com.segi.spring.task.executor.exception.MyAsyncUncaughtExceptionHandler;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
+
+/**
+ * @author chenzx
+ * @date 2019-03-26 上午 10:46
+ */
+@Configuration
+@ComponentScan
+//@EnableAsync
+@ImportResource(locations = "classpath:spring/applicationContext-task.xml")
+public class AnnotationConfig /*implements AsyncConfigurer*/ {
+
+    /*@Override
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(25);
+        executor.setQueueCapacity(20);
+        executor.initialize();
+        return executor;
+    }
+
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new MyAsyncUncaughtExceptionHandler();
+    }*/
+}

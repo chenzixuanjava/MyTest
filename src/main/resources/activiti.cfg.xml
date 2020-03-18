@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/activiti?autoReconnect=true" />
+        <property name="jdbcDriver" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUsername" value="root" />
+        <property name="jdbcPassword" value="123456" />
+        <property name="typedEventListeners">
+            <!--<list>
+                <bean class="com.segi.activiti5.listener.MyActivitiListener"></bean>
+            </list>-->
+            <map>
+                <entry key="JOB_EXECUTION_SUCCESS,JOB_EXECUTION_FAILURE">
+                    <list>
+                        <bean class="com.segi.activiti5.listener.MyActivitiListenerTyped"></bean>
+                    </list>
+                </entry>
+            </map>
+        </property>
+        <!--<property name="databaseSchemaUpdate" value="true" />
+
+        <property name="jobExecutorActivate" value="false" />
+
+        <property name="mailServerHost" value="mail.my-corp.com" />
+        <property name="mailServerPort" value="5025" />-->
+    </bean>
+
+</beans>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--创建Bean-->
+    <!--使用默认构造器创建Bean-->
+    <!--<bean id="compactDisc" class="com.segi.spring.IOC.model.CompactDiscImpl"/>-->
+
+    <!--装配-->
+    <!--1、通过构造器注入-->
+    <!--1）constructor-arg属性注入-->
+    <!--<bean id="discPlayer" class="com.segi.spring.IOC.model.DiscPlayer">
+        <constructor-arg ref="compactDisc"/>
+    </bean>-->
+
+
+    <!--<bean class="com.segi.spring.IOC.CDConfig"/>-->
+    <!--2）c命名空间 无法装配集合-->
+    <!--①c:构造器参数名-ref-->
+    <!--<bean id="discPlayer" class="com.segi.spring.IOC.model.DiscPlayer" c:compactDisc-ref="compactDisc"/>-->
+    <!--②c:_构造器索引（0开始）-ref-->
+    <!--<bean id="discPlayer" class="com.segi.spring.IOC.model.DiscPlayer" c:_0-ref="compactDisc"/>-->
+
+    <!--参数为字面量,比对象引用少了-ref -->
+    <!--<bean id="compactDiscImpl2" class="com.segi.spring.IOC.model.CompactDiscImpl2"
+        c:_0="love" c:_1="MC"/>-->
+
+    <!--如果注入的是集合-->
+    <!--<value/>表示null-->
+    <!--<bean id="compactDiscImpl3" class="com.segi.spring.IOC.model.CompactDiscImpl">
+        <constructor-arg value="hate"/>
+        <constructor-arg value="LDH"/>
+        <constructor-arg>
+            <list>
+                <value>track01</value>
+                <value>track02</value>
+                <value>track03</value>
+            </list>
+        </constructor-arg>
+    </bean>-->
+
+    <!--2、通过Setter方法注入-->
+    <!--1）<property/>属性-->
+    <!--<bean id="discPlayer-2" class="com.segi.spring.IOC.model.DiscPlayer">
+        <property name="compactDisc" ref="compactDisc"/>
+    </bean>-->
+    <!--2）p命名空间 不能装配集合-->
+    <!--<bean id="discPlayer-3" class="com.segi.spring.IOC.model.DiscPlayer"
+        p:compactDisc-ref="compactDisc"/>-->
+
+    <bean id="myFactoryBean" class="com.segi.common.spring.IOC.MyFactoryBean"/>
+
+    <!--占位符属性-->
+    <bean id="person2" class="com.segi.spring.annotaition.value.bean.Person"
+          p:name="${person.name}" p:age="${person.age}"/>
+
+    <!--SpEl表达式-->
+    <!--<bean id="person5" class="com.segi.spring.annotaition.value.bean.Person"
+          p:name="#{person.name}" p:age="#{person.age}"/>-->
+
+    <!--开启占位符-->
+    <context:property-placeholder location="classpath:properties/value/common.properties"/>
+
+    <bean id="myBean" class="com.segi.spring.resource.ResourceLoadBean">
+        <property name="template"
+                  value="classpath:properties\\value\common.properties"/>
+    </bean>
+</beans>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--启用基于@Aspect注解的切面，等同于Java注解的@EnableAspectJAutoProxy-->
+    <!--<aop:aspectj-autoproxy/>-->
+    <bean id="performencexml" class="com.segi.spring.AOP.model.xml.PerformenceImpl"/>
+
+    <bean id="gf" class="com.segi.spring.AOP.model.xml.GF"/>
+    <bean id="audience" class="com.segi.spring.AOP.model.xml.Audience">
+        <property name="gf" ref="gf"/>
+    </bean>
+
+    <!--<aop:config>
+        <aop:aspect ref="audience">
+            <aop:before method="sliceCellPhone"
+                        pointcut="execution(* com.segi.spring.AOP.model.xml.Performence.perform(..))"/>
+            <aop:before method="takeSeat"
+                        pointcut="execution(* com.segi.spring.AOP.model.xml.Performence.perform(..))"/>
+            <aop:after-returning method="clap"
+                                 pointcut="execution(* com.segi.spring.AOP.model.xml.Performence.perform(..))"/>
+            <aop:after-throwing method="returnMoney"
+                                pointcut="execution(* com.segi.spring.AOP.model.xml.Performence.perform(..))"/>
+        </aop:aspect>
+    </aop:config>-->
+
+    <aop:config>
+        <aop:pointcut id="performence" expression="execution(* com.segi.spring.AOP.model.xml.Performence.perform(..))"/>
+        <aop:aspect ref="audience">
+            <aop:before method="sliceCellPhone"
+                        pointcut-ref="performence"/>
+            <aop:before method="takeSeat"
+                        pointcut-ref="performence"/>
+            <aop:after-returning method="clap"
+                                 pointcut-ref="performence"/>
+            <aop:after-throwing method="returnMoney"
+                                pointcut-ref="performence"/>
+            <aop:around method="watchPerformence"
+                        pointcut-ref="performence"/>
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="playTrackCounterxml" class="com.segi.spring.AOP.model.xml.PlayTrackCounter"/>
+    <bean id="compactDiscxml" class="com.segi.spring.AOP.model.xml.CompactDiscImpl"/>
+
+    <aop:config>
+        <aop:pointcut id="playTrack" expression="execution(* com.segi.spring.AOP.model.xml.CompactDiscImpl.playTrack(int)) and args(trackNumber)"/>
+        <aop:aspect ref="playTrackCounterxml">
+            <aop:before method="count"
+                        pointcut-ref="playTrack"/>
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="encorablexml" class="com.segi.spring.AOP.model.xml.EncorableImpl"/>
+
+    <aop:config>
+        <aop:aspect>
+            <aop:declare-parents types-matching="com.segi.spring.AOP.model.xml.Performence+"
+                                 implement-interface="com.segi.spring.AOP.model.xml.Encorable"
+                                 delegate-ref="encorablexml"/>
+        </aop:aspect>
+    </aop:config>
+</beans>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jms
+        http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+    <bean id="connectionFactoryAct" class="org.apache.activemq.spring.ActiveMQConnectionFactory"
+          p:brokerURL="tcp://localhost:61616"/>
+
+    <!--<bean id="queue" class="org.apache.activemq.command.ActiveMQQueue"
+          p:physicalName="spittle.queue"/>
+
+    <bean id="topic" class="org.apache.activemq.command.ActiveMQTopic"
+          p:physicalName="spittle.topic"/>-->
+
+    <!--defaultDestinationName: 如果已经存在该名称的队列或主题的话，就会使用已有的。
+    如果尚未存在的话，将会创建一个新的目的地（通常会是队列）-->
+    <bean id="messageConverter" class="org.springframework.jms.support.converter.MappingJackson2MessageConverter">
+        <!--一定要设置typeIdPropertyName，否则空指针异常-->
+        <property name="typeIdPropertyName" value="spi"/>
+    </bean>
+
+    <bean id="" class="org.springframework.jms.core.JmsTemplate"
+          p:connectionFactory-ref="connectionFactoryAct"
+          p:defaultDestinationName="spittle.alert.queue"
+          p:messageConverter-ref="messageConverter"/>
+
+
+    <bean id="spittleAlertHandler" class="com.segi.springmvc.handler.SpittleAlertHandler"/>
+
+    <!--消息服务导出器-->
+    <bean id="serviceExporter" class="org.springframework.jms.remoting.JmsInvokerServiceExporter"
+          p:service-ref="alertServiceImpl"
+          p:serviceInterface="com.segi.springmvc.service.AlertService"/>
+
+    <!--消息监听器容器-->
+    <jms:listener-container connection-factory="connectionFactoryAct" message-converter="messageConverter">
+        <!--<jms:listener destination="spittle.alert.queue" ref="spittleAlertHandler"
+                      method="receiveSpittleAlert"/>-->
+        <!--消息服务导出器设置成消息监听器-->
+        <jms:listener destination="spittle.alert.queue" ref="serviceExporter"/>
+    </jms:listener-container>
+</beans>

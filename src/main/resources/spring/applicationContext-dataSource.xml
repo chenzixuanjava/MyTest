@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jms
+        http://www.springframework.org/schema/jms/spring-jms.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd"
+        profile="dev">
+
+    <!--
+    配置数据源三种方式：
+    1、通过JDBC驱动程序定义的数据源；
+    2、通过JNDI查找的数据源；
+    3、连接池的数据源。
+    另外：4、使用嵌入式的数据源（一般开发测试使用）
+    -->
+
+    <!--
+    initialSize:池启动时创建的连接数量;
+    maxActive:同一时间可从池中分配的最多连接数。如果设置为0，表示无限制;
+    -->
+    <beans profile="qa">
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+              p:driverClassName="org.h2.Driver"
+              p:url="jdbc:h2:tcp://localhost/~/spitter"
+              p:username="sa"
+              p:password=""
+              p:initialSize="5"
+              p:maxActive="10"/>
+    </beans>
+
+    <!--
+    ndi-name属性用于指定JNDI中资源的名。如果只设置了jndi-name属性，那么就会根据指定的名称查找数据源。
+    如果应用程序运行在Java应用服务器中，你需要将resource-ref属性设置为true，这样给定的jndi-name将
+    会自动添加“java:comp/env/”前缀。
+    -->
+    <beans profile="prod">
+        <jee:jndi-lookup id="dataSource" jndi-name="/jdbc/SpitterDS" resource-ref="true"/>
+    </beans>
+
+    <!--
+    与具备池功能的数据源相比，唯一的区别在于这些数据源bean都没有提供连接池功能，所以没有可配置的池相关的属性。
+    尽管这些数据源对于小应用或开发环境来说是不错的，但是要将其用于生产环境，你还是需要慎重考虑。因为
+    SingleConnectionDataSource有且只有一个数据库连接，所以不适合用于多线程的应用程序，最好只在测试的时候使用。
+    而DriverManagerDataSource和SimpleDriverDataSource尽管支持多线程，但是在每次请求连接的时候都会创建新
+    连接，这是以性能为代价的。鉴于以上的这些限制，我强烈建议应该使用数据源连接池。
+    -->
+    <beans profile="other">
+        <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+              p:driverClassName="org.h2.Driver"
+              p:url="jdbc:h2:tcp://localhost/~/spitter"
+              p:username="sa"
+              p:password=""
+        />
+    </beans>
+
+
+    <jdbc:embedded-database id="dataSource" type="H2">
+        <jdbc:script location=""/>
+    </jdbc:embedded-database>
+</beans>

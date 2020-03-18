@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//log4j/log4j Configuration//EN" "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- 控制台日志输入管道 -->
+	<appender name="myConsole" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd HH:mm:ss,SSS\} %-5p] [%t] %c{2\} - %m%n" />
+		</layout>
+		<!--过滤器设置输出的级别 -->
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="DEBUG" />
+			<param name="levelMax" value="error" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+	<!-- end -->
+
+	<!-- 文件输出输入日志配置 -->
+	<appender name="infoFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="Encoding" value="UTF-8" />
+		<param name="File" value="D:\\Users\\Administrator\\IdeaProjects\\my_test\\Test2\\src\\main\\resources\\log\\log4j\\xml/info.log" />
+		<param name="Append" value="true" />
+		<param name="MaxBackupIndex" value="10" />
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="INFO" />
+			<param name="levelMax" value="INFO" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd HH:mm:ss,SSS\} %-5p] [%t] %c{2\} - %m%n" />
+		</layout>
+	</appender>
+	<appender name="debugFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="Encoding" value="UTF-8" />
+		<param name="File" value="D:\\Users\\Administrator\\IdeaProjects\\my_test\\Test2\\src\\main\\resources\\log\\log4j\\xml/debug.log" />
+		<param name="Append" value="true" />
+		<param name="MaxBackupIndex" value="10" />
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="DEBUG" />
+			<param name="levelMax" value="ERROR" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd HH:mm:ss,SSS\} %-5p] [%t] %c{2\} - %m%n" />
+		</layout>
+	</appender>
+	<appender name="errorFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="Encoding" value="UTF-8" />
+		<param name="File" value="D:\\Users\\Administrator\\IdeaProjects\\my_test\\Test2\\src\\main\\resources\\log\\log4j\\xml/error.log" />
+		<param name="Append" value="true" />
+		<param name="MaxBackupIndex" value="10" />
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="ERROR" />
+			<param name="levelMax" value="ERROR" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd HH:mm:ss,SSS\} %-5p] [%t] %c{2\} - %m%n" />
+		</layout>
+	</appender>
+	<appender name="activexAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="D:\\Users\\Administrator\\IdeaProjects\\my_test\\Test2\\src\\main\\resources\\log\\log4j\\xml/activex.log" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{MMdd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+    
+    <!--<logger name="org.apache.axis.ConfigurationException" additivity="false">
+		<level value="info"/>
+		<appender-ref ref="infoFile"/>
+	</logger>-->
+
+	<!--<log4j:configuration></log4j:configuration>节点下增加这个子节点-->
+    <logger name="org.apache.axis.ConfigurationException">
+        <level value="INFO" />
+    </logger>
+	
+	<!-- 根logger的设置 ，默认所有的日志配置-->
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="myConsole"/>
+		<appender-ref ref="infoFile" />
+		<appender-ref ref="debugFile" />		
+		<appender-ref ref="errorFile" />
+	</root>
+	<!-- end -->
+
+</log4j:configuration>
+
